@@ -266,8 +266,12 @@
         function create() {
             const level = levels[currentLevel];
             
-            // Blue sky background
-            this.cameras.main.setBackgroundColor('#4488FF');
+            // Beautiful gradient background (pink to purple)
+            this.cameras.main.setBackgroundColor('#FF69B4');
+            const bg = this.add.graphics();
+            bg.fillGradientStyle(0xFF69B4, 0xFF69B4, 0xFF1493, 0xFF1493, 1);
+            bg.fillRect(0, 0, 800, 600);
+            bg.depth = -1;
             
             // Player (RED SQUARE)
             player = this.add.rectangle(50, 500, 20, 30, 0xFF0000);
@@ -275,10 +279,10 @@
             player.body.setBounce(0.2);
             player.body.setCollideWorldBounds(true);
             
-            // Platforms (GREEN)
+            // Platforms (BRIGHT CYAN)
             platformBodies = [];
             level.platforms.forEach(p => {
-                const platform = this.add.rectangle(p.x + p.width/2, p.y + p.height/2, p.width, p.height, 0x00DD00);
+                const platform = this.add.rectangle(p.x + p.width/2, p.y + p.height/2, p.width, p.height, 0x00FFFF);
                 this.physics.add.existing(platform);
                 platform.body.setImmovable(true);
                 platform.body.setAllowGravity(false);
@@ -294,10 +298,10 @@
             this.physics.add.existing(goal);
             goal.body.setAllowGravity(false);
             
-            // Enemies (ORANGE)
+            // Enemies (BRIGHT PURPLE)
             enemies = this.add.group();
             level.enemies.forEach(e => {
-                const enemy = this.add.rectangle(e.x, e.y, 20, 20, 0xFF8800);
+                const enemy = this.add.rectangle(e.x, e.y, 20, 20, 0x9D4EDD);
                 this.physics.add.existing(enemy);
                 enemy.body.setBounce(1);
                 enemy.body.setVelocity(e.speed * 100, 0);
@@ -346,9 +350,9 @@
             this.add.text(10, 10, level.name, { fontSize: '16px', fill: '#FFFFFF', fontStyle: 'bold' });
             this.add.text(10, 40, 'Tap to Jump | Use Buttons to Move | Reach the Star!', { fontSize: '12px', fill: '#FFFFFF' });
             
-            // Touch buttons for mobile
-            const leftBtn = this.add.rectangle(60, 550, 80, 40, 0x0066FF);
-            const rightBtn = this.add.rectangle(740, 550, 80, 40, 0x0066FF);
+            // Touch buttons for mobile (bright colors)
+            const leftBtn = this.add.rectangle(60, 550, 80, 40, 0x00D9FF);
+            const rightBtn = this.add.rectangle(740, 550, 80, 40, 0x00D9FF);
             leftBtn.setInteractive();
             rightBtn.setInteractive();
             
