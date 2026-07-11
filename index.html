@@ -27,18 +27,25 @@
     <script>
         const levels = [
             {
-                name: 'Level 1: Learning to Jump',
+                name: 'Level 1: Stairs Up Up Down!',
                 platforms: [
                     { x: 0, y: 550, width: 800, height: 50 },
-                    { x: 150, y: 450, width: 150, height: 20 },
-                    { x: 500, y: 400, width: 150, height: 20 },
-                    { x: 300, y: 300, width: 150, height: 20 },
-                    { x: 600, y: 200, width: 150, height: 20 },
+                    // Going UP stairs on left
+                    { x: 100, y: 480, width: 100, height: 20 },
+                    { x: 200, y: 410, width: 100, height: 20 },
+                    { x: 300, y: 340, width: 100, height: 20 },
+                    { x: 400, y: 270, width: 100, height: 20 },
+                    // Going UP more on right
+                    { x: 500, y: 200, width: 100, height: 20 },
+                    { x: 600, y: 130, width: 100, height: 20 },
+                    // Going DOWN stairs on right
+                    { x: 650, y: 200, width: 100, height: 20 },
+                    { x: 700, y: 270, width: 100, height: 20 },
                 ],
                 enemies: [
-                    { x: 200, y: 500, speed: 2, minX: 100, maxX: 400 }
+                    { x: 250, y: 490, speed: 2, minX: 100, maxX: 400 }
                 ],
-                goal: { x: 700, y: 150 }
+                goal: { x: 750, y: 350 }
             },
             {
                 name: 'Level 2: Getting Higher',
