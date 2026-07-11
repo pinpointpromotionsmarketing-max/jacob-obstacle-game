@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jacob's Obstacle Course</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #1a1a1a;
+            font-family: Arial, sans-serif;
+        }
+        #game {
+            border: 3px solid #00ff00;
+        }
+        .info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game"></div>
+    
+    <script>
+        // Level definitions
+        const levels = [
+            // Level 1 - Easy intro
+            {
+                name: 'Level 1: Learning to Jump',
+                platforms: [
+                    { x: 0, y: 550, width: 800, height: 50 }, // ground
+                    { x: 150, y: 450, width: 150, height: 20 },
+                    { x: 500, y: 400, width: 150, height: 20 },
+                    { x: 300, y: 300, width: 150, height: 20 },
+                    { x: 600, y: 200, width: 150, height: 20 },
+                ],
+                enemies: [
+                    { x: 200, y: 500, speed: 2, minX: 100, maxX: 400 }
+                ],
+                goal: { x: 700, y: 150 }
+            },
+            // Level 2
+            {
+                name: 'Level 2: Getting Higher',
+                platforms: [
+                    { x: 0, y: 550, width: 800, height: 50 },
+                    { x: 100, y: 450, width: 120, height: 20 },
+                    { x: 300, y: 380, width: 120, height: 20 },
+                    { x: 520, y: 320, width: 120, height: 20 },
+                    { x: 200, y: 240, width: 120, height: 20 },
+                    { x: 600, y: 160, width: 120, height: 20 },
+                ],
+                enemies: [
+                    { x: 200, y: 500, speed: 2.5, minX: 80, maxX: 420 },
+                    { x: 550, y: 370, speed: 2, minX: 480, maxX: 640 }
+                ],
+                goal: { x: 700, y: 100 }
+            },
+            // Level 3
+            {
+                name: 'Level 3: Narrow Paths',
+                platforms: [
+                    { x: 0, y: 550, width: 800, height: 50 },
+                    { x: 50, y: 470, width: 100, height: 20 },
+                    { x: 200, y: 400, width: 100, height: 20 },
+                    { x: 380, y: 340, width: 100, height: 20 },
+                    { x: 550, y: 270, width: 100, height: 20 },
+                    { x: 300, y: 200, width: 100, height: 20 },
+                    { x: 650, y: 130, width: 100, height: 20 },
+                ],
+                enemies: [
+                    { x: 150, y: 520, speed: 2.5, minX: 50, maxX: 250 },
+                    { x: 450, y: 390, speed: 3, minX: 350, maxX: 550 }
+                ],
+                goal: { x: 700, y: 70 }
+            },
+            // Level 4 - Still easy
+            {
+                name: 'Level 4: Speed Up',
+                platforms: [
+                    { x: 0, y: 550, width: 800, height: 50 },
+                    { x: 80, y: 450, width: 90, height: 20 },
+                    { x: 250, y: 380, width: 90, height: 20 },
+                    { x: 420, y: 320, width: 90, height: 20 },
+                    { x: 150, y: 250, width: 90, height: 20 },
+                    { x: 550, y: 190, width: 90, height: 20 },
+                    { x: 350, y: 120, width: 90, height: 20 },
+                ],
+                enemies: [
+                    { x: 200, y: 500, speed: 3, minX: 60, maxX: 300 },
+                    { x: 480, y: 370, speed: 3.5, minX: 380, maxX: 550 },
+                    { x: 300, y: 280, speed: 3, minX: 150, maxX: 450 }
+                ],
+                goal: { x: 700, y: 50 }
+            },
+            // Level 5 - GETS HARDER!
+            {
+                name: 'Level 5: CHALLENGE STARTS!',
+                platforms: [
+                    { x: 0, y: 550, width: 800, height: 50 },
+                    { x: 50, y: 470, width: 80, height: 20 },
+                    { x: 220, y: 400, width: 80, height: 20 },
+                    { x: 400, y: 330, width: 80, height: 20 },
+                    { x: 100, y: 260, width: 80, height: 20 },
+                    { x: 550, y: 200, width: 80, height: 20 },
+                    { x: 300, y: 130, width: 80, height: 20 },
+                    { x: 680, y: 60, width: 80, height: 20 },
+                ],
+                enemies: [
+                    { x: 150, y: 520, speed: 3.5, minX: 40, maxX: 260 },
+                    { x: 350, y: 380, speed: 4, minX: 220, maxX: 480 },
+                    { x: 500, y: 310, speed: 3.5, minX: 380, maxX: 600 },
+                    { x: 200, y: 210, speed: 4, minX: 100, maxX: 380 }
+                ],
+                goal: { x: 720, y: 10 }
+            },
+            // Level 6
+            {
+                name: 'Level 6: Tighter Gaps',
+                platforms: [
+                    { x: 0, y: 550, width: 800, height: 50 },
+                    { x: 40, y: 480, width: 75, height: 20 },
+                    { x: 200, y: 410, width: 75, height: 20 },
+                    { x: 380, y: 340, width: 75, height: 20 },
+                    { x: 80, y: 270, width: 75, height: 20 },
+                    { x: 530, y: 210, width: 75, height: 20 },
+                    { x: 280, y: 140, width: 75, height: 20 },
+                    { x: 650, y: 70, width: 75, height: 20 },
+                ],
+                enemies: [
+                    { x: 100, y: 530, speed: 4, minX: 30, maxX: 240 },
+                    { x: 300, y: 460, speed: 4.5, minX: 180, maxX: 420 },
+                    { x: 450, y: 390, speed: 4, minX: 350, maxX: 550 },
+                    { x: 200, y: 320, speed: 4.5, minX: 60, maxX: 280 },
+                    { x: 600, y: 260, speed: 4, minX: 500, maxX: 650 }
+                ],
+                goal: { x: 700, y: 20 }
+            },
+            // Level 7
+            {
+                name: 'Level 7: Dodge Master',
+                platforms: [
+                    { x: 0, y: 550, width: 800, height: 50 },
+                    { x: 30, y: 470, width: 70, height: 20 },
+                    { x: 180, y: 410, width: 70, height: 20 },
+                    { x: 360, y: 350, width: 70, height: 20 },
+                    { x: 120, y: 280, width: 70, height: 20 },
+                    { x: 510, y: 220, width: 70, height: 20 },
+                    { x: 260, y: 150, width: 70, height: 20 },
+                    { x: 650, y: 80, width: 70, height: 20 },
+                ],
+                enemies: [
+                    { x: 100, y: 520, speed: 4.5, minX: 20, maxX: 250 },
+                    { x: 250, y: 460, speed: 5, minX: 150, maxX: 380 },
+                    { x: 420, y: 400, speed: 4.5, minX: 320, maxX: 540 },
+                    { x: 150, y: 330, speed: 5, minX: 80, maxX: 300 },
+                    { x: 580, y: 270, speed: 4.5, minX: 470, maxX: 680 },
+                    { x: 350, y: 200, speed: 5, minX: 230, maxX: 430 }
+                ],
+                goal: { x: 700, y: 30 }
+            },
+            // Level 8
+            {
+                name: 'Level 8: Expert Course',
+                platforms: [
+                    { x: 0, y: 550, width: 800, height: 50 },
+                    { x: 25, y: 480, width: 65, height: 20 },
+                    { x: 170, y: 420, width: 65, height: 20 },
+                    { x: 340, y: 360, width: 65, height: 20 },
+                    { x: 100, y: 290, width: 65, height: 20 },
+                    { x: 490, y: 230, width: 65, height: 20 },
+                    { x: 240, y: 160, width: 65, height: 20 },
+                    { x: 620, y: 90, width: 65, height: 20 },
+                ],
+                enemies: [
+                    { x: 80, y: 530, speed: 5, minX: 10, maxX: 250 },
+                    { x: 230, y: 470, speed: 5.5, minX: 130, maxX: 380 },
+                    { x: 400, y: 410, speed: 5, minX: 300, maxX: 540 },
+                    { x: 130, y: 340, speed: 5.5, minX: 50, maxX: 280 },
+                    { x: 560, y: 280, speed: 5, minX: 450, maxX: 650 },
+                    { x: 320, y: 210, speed: 5.5, minX: 200, maxX: 450 },
+                    { x: 550, y: 140, speed: 5, minX: 420, maxX: 680 }
+                ],
+                goal: { x: 700, y: 40 }
+            },
+            // Level 9 - Super Hard
+            {
+                name: 'Level 9: Extreme Challenge',
+                platforms: [
+                    { x: 0, y: 550, width: 800, height: 50 },
+                    { x: 20, y: 490, width: 60, height: 20 },
+                    { x: 160, y: 430, width: 60, height: 20 },
+                    { x: 320, y: 370, width: 60, height: 20 },
+                    { x: 90, y: 300, width: 60, height: 20 },
+                    { x: 470, y: 240, width: 60, height: 20 },
+                    { x: 220, y: 170, width: 60, height: 20 },
+                    { x: 600, y: 100, width: 60, height: 20 },
+                ],
+                enemies: [
+                    { x: 80, y: 540, speed: 5.5, minX: 10, maxX: 240 },
+                    { x: 220, y: 480, speed: 6, minX: 120, maxX: 380 },
+                    { x: 380, y: 420, speed: 5.5, minX: 280, maxX: 540 },
+                    { x: 120, y: 350, speed: 6, minX: 40, maxX: 280 },
+                    { x: 540, y: 290, speed: 5.5, minX: 430, maxX: 650 },
+                    { x: 300, y: 220, speed: 6, minX: 180, maxX: 450 },
+                    { x: 530, y: 150, speed: 5.5, minX: 400, maxX: 700 },
+                    { x: 200, y: 100, speed: 6, minX: 100, maxX: 380 }
+                ],
+                goal: { x: 700, y: 50 }
+            },
+            // Level 10 - ULTIMATE CHALLENGE
+            {
+                name: 'Level 10: ULTIMATE CHALLENGE!!!',
+                platforms: [
+                    { x: 0, y: 550, width: 800, height: 50 },
+                    { x: 15, y: 500, width: 55, height: 20 },
+                    { x: 150, y: 440, width: 55, height: 20 },
+                    { x: 300, y: 380, width: 55, height: 20 },
+                    { x: 80, y: 310, width: 55, height: 20 },
+                    { x: 450, y: 250, width: 55, height: 20 },
+                    { x: 200, y: 180, width: 55, height: 20 },
+                    { x: 580, y: 110, width: 55, height: 20 },
+                ],
+                enemies: [
+                    { x: 70, y: 550, speed: 6, minX: 5, maxX: 230 },
+                    { x: 210, y: 490, speed: 6.5, minX: 110, maxX: 370 },
+                    { x: 360, y: 430, speed: 6, minX: 260, maxX: 540 },
+                    { x: 110, y: 360, speed: 6.5, minX: 30, maxX: 270 },
+                    { x: 520, y: 300, speed: 6, minX: 410, maxX: 660 },
+                    { x: 280, y: 230, speed: 6.5, minX: 160, maxX: 440 },
+                    { x: 510, y: 160, speed: 6, minX: 380, maxX: 680 },
+                    { x: 180, y: 110, speed: 6.5, minX: 80, maxX: 360 },
+                    { x: 650, y: 60, speed: 6, minX: 550, maxX: 750 }
+                ],
+                goal: { x: 700, y: 60 }
+            }
+        ];
+
+        const config = {
+            type: Phaser.AUTO,
+            width: 800,
+            height: 600,
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: { y: 300 },
+                    debug: false
+                }
+            },
+            scene: {
+                create: create,
+                update: update
+            }
+        };
+
+        const game = new Phaser.Game(config);
+        
+        let currentLevel = 0;
+        let player;
+        let platforms;
+        let enemies;
+        let goal;
+        let cursors;
+        let levelText;
+        let instructionText;
+
+        function create() {
+            loadLevel(currentLevel);
+        }
+
+        function loadLevel(levelIndex) {
+            // Clear old physics objects
+            if (this.physics) {
+                this.physics.world.colliders.getActive().forEach(collider => collider.destroy());
+            }
+
+            const level = levels[levelIndex];
+            
+            // Background
+            this.cameras.main.setBackgroundColor('#87CEEB');
+
+            // Create player
+            player = this.add.rectangle(50, 500, 20, 30, 0xFF0000);
+            this.physics.add.existing(player);
+            player.body.setBounce(0.2);
+            player.body.setCollideWorldBounds(true);
+            player.body.onWorldBounds = true;
+
+            // Create platforms
+            platforms = this.physics.add.staticGroup();
+            level.platforms.forEach(p => {
+                platforms.create(p.x + p.width/2, p.y, null).setScale(p.width/10, p.height/10).setOrigin(0.5, 0.5).refreshBody();
+                this.add.rectangle(p.x + p.width/2, p.y + p.height/2, p.width, p.height, 0x00AA00);
+            });
+
+            // Create goal
+            goal = this.add.star(level.goal.x, level.goal.y, 5, 15, 25, 0xFFFF00);
+            this.physics.add.existing(goal);
+            goal.body.setAllowGravity(false);
+
+            // Create enemies
+            enemies = this.add.group();
+            level.enemies.forEach(e => {
+                const enemy = this.add.rectangle(e.x, e.y, 20, 20, 0xFF6600);
+                this.physics.add.existing(enemy);
+                enemy.body.setBounce(1);
+                enemy.body.setVelocity(e.speed * 100, 0);
+                enemy.minX = e.minX;
+                enemy.maxX = e.maxX;
+                enemy.speed = e.speed;
+                enemies.add(enemy);
+            });
+
+            // Colliders
+            this.physics.add.collider(player, platforms);
+            this.physics.add.collider(enemies, platforms);
+            
+            // Win condition
+            this.physics.add.overlap(player, goal, () => {
+                if (currentLevel < levels.length - 1) {
+                    currentLevel++;
+                    this.scene.restart();
+                } else {
+                    this.add.text(400, 300, '🎉 YOU WON! 🎉', { fontSize: '40px', fill: '#000000' }).setOrigin(0.5);
+                    this.physics.pause();
+                }
+            });
+
+            // Lose condition (touch enemy)
+            this.physics.add.overlap(player, enemies, () => {
+                this.scene.restart();
+            });
+
+            // Jump when touching ground
+            cursors = this.input.keyboard.createCursorKeys();
+            
+            // UI
+            levelText = this.add.text(10, 10, level.name, { fontSize: '16px', fill: '#000000', backgroundColor: '#FFFFFF', padding: { x: 5, y: 5 } });
+            instructionText = this.add.text(10, 40, 'Arrow Keys: Move | Space: Jump | Reach the STAR!', { fontSize: '12px', fill: '#000000', backgroundColor: '#FFFFFF', padding: { x: 5, y: 5 } });
+        }
+
+        function update() {
+            // Player movement
+            if (cursors.left.isDown) {
+                player.body.setVelocityX(-160);
+            } else if (cursors.right.isDown) {
+                player.body.setVelocityX(160);
+            } else {
+                player.body.setVelocityX(0);
+            }
+
+            // Jump
+            if (cursors.space.isDown && player.body.touching.down) {
+                player.body.setVelocityY(-330);
+            }
+
+            // Enemy AI - bounce between min/max X
+            enemies.children.entries.forEach(enemy => {
+                if (enemy.x < enemy.minX) {
+                    enemy.body.setVelocityX(enemy.speed * 100);
+                } else if (enemy.x > enemy.maxX) {
+                    enemy.body.setVelocityX(-enemy.speed * 100);
+                }
+            });
+
+            // Fall off bottom = die
+            if (player.y > 600) {
+                this.scene.restart();
+            }
+        }
+    </script>
+</body>
+</html>
