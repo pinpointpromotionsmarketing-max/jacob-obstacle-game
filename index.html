@@ -260,6 +260,8 @@
         let goal;
         let cursors;
         let canJump = true;
+        let touchLeft = false;
+        let touchRight = false;
 
         function create() {
             const level = levels[currentLevel];
@@ -342,7 +344,24 @@
             
             // Level text
             this.add.text(10, 10, level.name, { fontSize: '16px', fill: '#FFFFFF', fontStyle: 'bold' });
-            this.add.text(10, 40, 'Arrows: Move | Space: Jump | Reach the Star!', { fontSize: '12px', fill: '#FFFFFF' });
+            this.add.text(10, 40, 'Tap to Jump | Use Buttons to Move | Reach the Star!', { fontSize: '12px', fill: '#FFFFFF' });
+            
+            // Touch buttons for mobile
+            const leftBtn = this.add.rectangle(60, 550, 80, 40, 0x0066FF);
+            const rightBtn = this.add.rectangle(740, 550, 80, 40, 0x0066FF);
+            leftBtn.setInteractive();
+            rightBtn.setInteractive();
+            
+            this.add.text(60, 550, '◄', { fontSize: '30px', fill: '#FFFFFF' }).setOrigin(0.5, 0.5);
+            this.add.text(740, 550, '►', { fontSize: '30px', fill: '#FFFFFF' }).setOrigin(0.5, 0.5);
+            
+            leftBtn.on('pointerdown', () => { touchLeft = true; });
+            leftBtn.on('pointerup', () => { touchLeft = false; });
+            leftBtn.on('pointerout', () => { touchLeft = false; });
+            
+            rightBtn.on('pointerdown', () => { touchRight = true; });
+            rightBtn.on('pointerup', () => { touchRight = false; });
+            rightBtn.on('pointerout', () => { touchRight = false; });
         }
 
         function update() {
@@ -350,9 +369,9 @@
                 canJump = false;
             }
             
-            if (cursors.left.isDown) {
+            if (cursors.left.isDown || touchLeft) {
                 player.body.setVelocityX(-160);
-            } else if (cursors.right.isDown) {
+            } else if (cursors.right.isDown || touchRight) {
                 player.body.setVelocityX(160);
             } else {
                 player.body.setVelocityX(0);
