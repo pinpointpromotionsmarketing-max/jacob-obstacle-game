@@ -327,12 +327,18 @@
             
             // Input
             cursors = this.input.keyboard.createCursorKeys();
-            this.input.keyboard.on('keydown-SPACE', () => {
+            const scene = this;
+            
+            const doJump = () => {
                 if (canJump) {
                     player.body.setVelocityY(-330);
                     canJump = false;
                 }
-            });
+            };
+            
+            // Space bar or click/tap to jump
+            this.input.keyboard.on('keydown-SPACE', doJump);
+            this.input.on('pointerdown', doJump);
             
             // Level text
             this.add.text(10, 10, level.name, { fontSize: '16px', fill: '#FFFFFF', fontStyle: 'bold' });
