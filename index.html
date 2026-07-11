@@ -283,7 +283,8 @@
             // Player (RED SQUARE)
             player = this.add.rectangle(50, 500, 20, 30, 0xFF0000);
             this.physics.add.existing(player);
-            player.body.setBounce(0.2);
+            player.body.setBounce(0);
+            player.body.setDrag(0.5);
             player.body.setCollideWorldBounds(true);
             
             // Platforms (BRIGHT CYAN)
@@ -342,7 +343,10 @@
             cursors = this.input.keyboard.createCursorKeys();
             const scene = this;
             
-            const doJump = () => {
+            const doJump = (pointer) => {
+                // Don't jump if tapping on the movement buttons (bottom area)
+                if (pointer && pointer.y > 500) return;
+                
                 if (canJump) {
                     player.body.setVelocityY(-330);
                     canJump = false;
